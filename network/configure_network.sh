@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# ~~~~~~~~~ INFO ~~~~~~~~~~~~ #
+#	Author: Ali Foroughi
+#	Email: <ali.foroughi92@gmail.com
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+
 ### Configure these values: 
 OM_GW=172.17.95.254
 S1MME_GW=172.17.80.193
