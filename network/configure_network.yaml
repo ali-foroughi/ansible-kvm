@@ -1,0 +1,74 @@
+- name: Configure network
+  hosts: all
+  tasks:
+    - name: Define static IP for OM interface
+      community.general.nmcli:
+        conn_name: "{{ om_if }}"
+        ifname: "{{ om_if }}"
+        ip4: "{{ om }}"
+        gw4: "{{ om_gw }}"
+        dns4:
+        - 172.20.11.11
+        - 8.8.8.8
+        state: present
+        autoconnect: yes
+        type: ethernet
+
+    - name: Define static IP for s1mme interface
+      community.general.nmcli:
+        conn_name: "{{ s1mme_if }}"
+        ifname: "{{ s1mme_if }}"
+        ip4: "{{ s1mme }}"
+        never_default4: yes
+        state: present
+        autoconnect: yes
+        type: ethernet
+        routes4_extended:
+          - ip=0.0.0.0/0 next_hop="{{ s1mme_gw }}" table=2
+#          - ip=172.17.80.0/24 next_hop=172.17.80.193 table=2
+        routing_rules4: "{{ routing_rules4 }}"
+
+    - name: Define static IP for s11 interface
+      community.general.nmcli:
+        conn_name: "{{ s11_if }}"
+        ifname: "{{ s11_if }}"
+        ip4: "{{ s11 }}"
+        never_default4: yes
+        routes4: "{{ routes4_s11 }}"
+        state: present
+        autoconnect: yes
+        type: ethernet
+
+    - name: Define static IP for db interface
+      community.general.nmcli:
+        conn_name: "{{ db_if }}"
+        ifname: "{{ db_if }}"
+        ip4: "{{ db }}"
+        never_default4: yes
+        routes4: "{{ routes4_db }}"
+#        routes4_extended:
+#          - ip=0.0.0.0/0 next_hop="{{ db_gw }}" table=3
+#          - ip=172.17.88.0/24 next_hop=172.17.88.193 table=3
+#        routing_rules4: "from 172.17.88.0/24 priority 5 table 3"
+        state: present
+        autoconnect: yes
+        type: ethernet
+
+    - name: interface down ens3
+      community.general.nmcli:
+         conn_name: ens3
+         ifname: ens3
+         type: ethernet
+         autoconnect: false
+         state: present
+
+#    - name: Add ip rule for local with priority 10
+#      ansible.builtin.command:
+#        cmd: "ip rule add from all table local priority 10"
+    
+#    - name: Remove ip rule for local with priority 0
+#      ansible.builtin.command:
+#        cmd: "ip rule del from all table local priority 0"
+
+    - name: reboot the VM
+      ansible.builtin.command: reboot

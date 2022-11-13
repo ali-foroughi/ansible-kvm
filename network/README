@@ -1,0 +1,7 @@
+Please enter the mme inforamtion in this format in the mme_names.txt file:
+
+MME_NAME OM_IP S1MME_IP S11_IP DB_IP
+
+example:
+
+srv16-mme-1 172.17.93.80/22 172.17.80.194/27 172.17.56.34/27 172.17.88.194/27

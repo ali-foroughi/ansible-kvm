@@ -1,0 +1,71 @@
+# tasks file for kvm_provision
+- name: Ensure requirements in place
+  package:
+    name:
+      - libguestfs-tools
+      - python3-libvirt
+    state: present
+  become: yes
+
+- name: Get VMs list
+  community.libvirt.virt:
+    command: list_vms
+  register: existing_vms
+  changed_when: no
+
+- name: Create VM if not exists
+  block:
+#    - name: Download base image
+#      get_url:
+#        url: "{{ base_image_url }}"
+#        dest: "/tmp/{{ base_image_name }}"
+#        checksum: "sha256:{{ base_image_sha }}"
+
+    - name: Copy base image to libvirt directory
+      copy:
+        dest: "{{ libvirt_pool_dir }}/{{ vm_name }}.qcow2"
+        src: "{{ libvirt_pool_dir }}/{{ base_image_name }}"
+        force: no
+        remote_src: yes
+        mode: 0660
+      register: copy_results
+
+    - name: Configure the image
+      command: |
+        virt-customize -a {{ libvirt_pool_dir }}/{{ vm_name }}.qcow2 \
+        --hostname {{ vm_name }} \
+        --root-password password:{{ vm_root_pass }} \
+        --ssh-inject 'root:file:{{ ssh_key }}'
+      when: copy_results is changed
+
+    - name: Copy the coredump disk image
+      copy:
+        dest: "/data/{{ vm_name }}-coredump.qcow2"
+        src: "/data/sample-coredump.qcow2"
+        force: no
+        remote_src: yes
+        mode: 0660
+        owner: libvirt-qemu
+        group: libvirt-qemu
+
+    - name: Define vm
+      community.libvirt.virt:
+        command: define
+        xml: "{{ lookup('template', 'vm-template.xml.j2') }}"
+
+  when: "vm_name not in existing_vms.list_vms"
+
+- name: Ensure VM is started
+  community.libvirt.virt:
+    name: "{{ vm_name }}"
+    state: running
+  register: vm_start_results
+  until: "vm_start_results is success"
+  retries: 15
+  delay: 2
+
+#- name: Ensure temporary file is deleted
+#  file:
+#    path: "/tmp/{{ base_image_name }}"
+#    state: absent
+#  when: cleanup_tmp | bool

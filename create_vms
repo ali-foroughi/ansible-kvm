@@ -1,0 +1,10 @@
+#!/bin/bash
+
+echo "[mme]" > inventory.txt
+cat vm_names.txt >> inventory.txt
+while read HOST; do
+sed -i 's/test-vm/'$HOST'/g' kvm_provision.yaml
+ansible-playbook kvm_provision.yaml
+sed -i 's/'$HOST'/test-vm/g' kvm_provision.yaml
+done < vm_names.txt
+rm inventory.txt

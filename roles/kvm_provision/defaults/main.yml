@@ -1,0 +1,13 @@
+---
+# defaults file for kvm_provision
+base_image_name: sample-mme-image.qcow2
+base_image_url: https://cloud.debian.org/images/cloud/bullseye/latest/{{ base_image_name }}
+base_image_sha: 91178d143201bc5d7ba20109b54fc0c5bbe93849d6c28065fe1e24224bce1b79
+libvirt_pool_dir: "/var/lib/libvirt/images"
+vm_name: mme-1
+vm_vcpus: 4
+vm_ram_mb: 4096 
+vm_net: default
+vm_root_pass: fdi@159753
+cleanup_tmp: no
+ssh_key: /root/.ssh/id_rsa.pub

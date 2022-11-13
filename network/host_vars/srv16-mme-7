@@ -1,0 +1,13 @@
+om: 172.17.93.86/22
+om_gw: 172.17.95.254
+om_if: ens8
+s1mme: 172.17.80.200/27
+s1mme_gw: 172.17.80.193
+s1mme_if: ens9
+s11: 172.17.56.40/27
+s11_gw: 172.17.56.33
+s11_if: ens10
+db: 172.17.88.200/27
+db_gw: 172.17.88.193
+db_if: ens11
+routing_rules4: "from 172.17.80.200 priority 5 table 2"
