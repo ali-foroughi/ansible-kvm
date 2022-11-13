@@ -2,7 +2,7 @@
 
 # ~~~~~~~~~ INFO ~~~~~~~~~~~~ #
 #	Author: Ali Foroughi
-#	Email: <ali.foroughi92@gmail.com
+#	Email: <ali.foroughi92@gmail.com>
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
 ### Configure these values: 
